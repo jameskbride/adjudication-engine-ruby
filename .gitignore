@@ -7,7 +7,8 @@
 /pkg/
 /spec/reports/
 /tmp/
-
+*.iml
+.idea
 # rspec failure tracking
 .rspec_status
 
