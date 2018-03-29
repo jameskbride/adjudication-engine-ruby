@@ -5,8 +5,7 @@ require "adjudication/engine/claim"
 
 module Adjudication
   module Engine
-    def self.run claims_data
-      fetcher = Adjudication::Providers::Fetcher.new
+    def self.run(claims_data, fetcher)
       provider_data = fetcher.provider_data
 
       # TODO filter resulting provider data, match it up to claims data by

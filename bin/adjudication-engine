@@ -2,6 +2,7 @@
 
 require "bundler/setup"
 require "adjudication/engine"
+require "adjudication/providers"
 
 require 'json'
 
@@ -19,7 +20,9 @@ HEREDOC
 end
 
 claims = JSON.parse(File.open(claims_data).read)
-processed_claims = Adjudication::Engine.run(claims)
+provider_data_uri = 'http://provider-data.beam.dental/beam-network.csv'
+fetcher = Adjudication::Providers::Fetcher.new(provider_data_uri)
+processed_claims = Adjudication::Engine.run(claims, fetcher)
 
 if processed_claims.empty?
   puts "No claims were processed. Make sure to return claims from Adjudication::Engine::run to make this work."
