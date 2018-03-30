@@ -4,20 +4,15 @@ require "adjudication/claims/claim"
 
 module Adjudication
   module Engine
-    def self.run(claims_data, fetcher)
-      provider_data = fetcher.provider_data
-
-      # TODO filter resulting provider data, match it up to claims data by
-      # provider NPI (national provider ID), and run the adjudicator.
-      # This method should return the processed claims
-
-      []
+    def self.run(claims_data, adjudication_engine)
+      adjudication_engine.process(claims_data)
     end
 
     class AdjudicationEngine
 
-      def initialize(adjudicator)
+      def initialize(adjudicator, fetcher)
         @adjudicator = adjudicator
+        @fetcher = fetcher
       end
 
       def process(claims_data)

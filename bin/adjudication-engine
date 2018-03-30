@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 
 require "bundler/setup"
-require "adjudication/engine"
-require "adjudication/providers"
+require "adjudication/engine/engine"
+require "adjudication/claims/adjudicator"
+require "adjudication/providers/fetcher"
 
 require 'json'
 
@@ -21,8 +22,10 @@ end
 
 claims = JSON.parse(File.open(claims_data).read)
 provider_data_uri = 'http://provider-data.beam.dental/beam-network.csv'
+adjudicator = Adjudication::Claims::Adjudicator.new
 fetcher = Adjudication::Providers::Fetcher.new(provider_data_uri)
-processed_claims = Adjudication::Engine.run(claims, fetcher)
+adjudication_engine = Adjudication::Engine::AdjudicationEngine.new(adjudicator, fetcher)
+processed_claims = Adjudication::Engine.run(claims, adjudication_engine)
 
 if processed_claims.empty?
   puts "No claims were processed. Make sure to return claims from Adjudication::Engine::run to make this work."
