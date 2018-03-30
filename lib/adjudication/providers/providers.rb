@@ -26,8 +26,7 @@ module Adjudication
 
       def retrieve_providers
         providers = @fetcher.provider_data
-        valid, invalid = @providers = providers.partition {|provider| provider.is_valid?}
-        @providers = valid
+        @providers, invalid = @providers = providers.partition {|provider| provider.is_valid?}
         invalid.each {|provider| $stderr.puts("Invalid provider: #{provider.npi}")}
       end
 
