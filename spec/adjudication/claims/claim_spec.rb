@@ -39,6 +39,13 @@ RSpec.describe Adjudication::Claims::Claim do
       expect(claim.is_rejected?).to eq(true)
     end
 
+    it "it is not rejected when at least one line item is not rejected" do
+      claim = Adjudication::Claims::Claim.new(claim_data)
+      claim.line_items[0].reject!
+
+      expect(claim.is_rejected?).to eq(false)
+    end
+
     it "it can reject all line items" do
       claim = Adjudication::Claims::Claim.new(claim_data)
 
