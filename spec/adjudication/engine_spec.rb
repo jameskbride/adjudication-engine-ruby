@@ -12,7 +12,7 @@ RSpec.describe Adjudication::Engine do
       context "when processing claims" do
 
         let(:claims_data) { build_claims_data }
-        let(:adjudicator) { Adjudication::Engine::Adjudicator.new }
+        let(:adjudicator) { Adjudication::Claims::Adjudicator.new }
         let(:adjudication_engine) { Adjudication::Engine::AdjudicationEngine.new(adjudicator) }
 
         it "it adjudicates all claims" do

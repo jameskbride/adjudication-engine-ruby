@@ -1,6 +1,6 @@
 require "adjudication/engine/version"
-require "adjudication/engine/adjudicator"
-require "adjudication/engine/claim"
+require "adjudication/claims/adjudicator"
+require "adjudication/claims/claim"
 
 module Adjudication
   module Engine

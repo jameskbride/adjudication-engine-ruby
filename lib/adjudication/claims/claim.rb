@@ -1,7 +1,7 @@
-require "adjudication/engine/claim_line_item"
+require "adjudication/claims/claim_line_item"
 
 module Adjudication
-  module Engine
+  module Claims
     class Claim
       attr_accessor(
         :number,

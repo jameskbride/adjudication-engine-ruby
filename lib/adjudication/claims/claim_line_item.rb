@@ -1,5 +1,5 @@
 module Adjudication
-  module Engine
+  module Claims
     class ClaimLineItem
       attr_accessor(
         :tooth_code
