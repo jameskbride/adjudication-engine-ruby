@@ -63,6 +63,15 @@ RSpec.describe Adjudication::Providers do
         providers = provider_manager.providers
         expect(providers).to eq([good_provider])
       end
+
+      it "logs invalid providers to stderr" do
+        invalid_npi = "a123456789"
+        good_provider = Adjudication::Providers::Provider.new("0123456789")
+        bad_provider = Adjudication::Providers::Provider.new(invalid_npi)
+        expect(fetcher).to receive(:provider_data).and_return([good_provider, bad_provider])
+
+        expect{provider_manager.retrieve_providers}.to output("Invalid provider: #{invalid_npi}\n").to_stderr
+      end
     end
   end
   end

@@ -3,6 +3,9 @@ require "adjudication/providers/fetcher"
 module Adjudication
   module Providers
     class Provider
+
+      attr_accessor(:npi)
+
       def initialize(npi)
         @npi = npi
       end
@@ -23,7 +26,9 @@ module Adjudication
 
       def retrieve_providers
         providers = @fetcher.provider_data
-        @providers = providers.select {|provider| provider.is_valid?}
+        valid, invalid = @providers = providers.partition {|provider| provider.is_valid?}
+        @providers = valid
+        invalid.each {|provider| $stderr.puts("Invalid provider: #{provider.npi}")}
       end
 
     end
