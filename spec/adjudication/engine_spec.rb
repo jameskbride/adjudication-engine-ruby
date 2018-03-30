@@ -18,14 +18,6 @@ RSpec.describe Adjudication::Engine do
         it "it adjudicates all claims" do
           processed_claims = adjudication_engine.process(claims_data)
           expect(processed_claims.length).to eq(1)
-
-          preprocessed_claim = claims_data[0]
-          claim = processed_claims[0]
-          expect(claim.number).to eq(preprocessed_claim['number'])
-          expect(claim.provider).to eq(preprocessed_claim['npi'])
-          expect(claim.subscriber).to eq(preprocessed_claim['subscriber'])
-          expect(claim.patient).to eq(preprocessed_claim['patient'])
-          expect(claim.start_date).to eq(preprocessed_claim['start_date'])
         end
       end
     end
