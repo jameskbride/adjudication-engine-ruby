@@ -4,7 +4,11 @@ module Adjudication
   module Providers
     class Provider
       def initialize(npi)
+        @npi = npi
+      end
 
+      def is_valid?
+        !!/^\d{10}$/.match(@npi)
       end
     end
 
@@ -14,7 +18,8 @@ module Adjudication
       end
 
       def retrieve_providers
-        @fetcher.provider_data
+        providers = @fetcher.provider_data
+        providers.select {|provider| provider.is_valid?}
       end
 
     end
