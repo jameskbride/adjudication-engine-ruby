@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "adjudication/engine"
+require "adjudication/engine/engine"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
