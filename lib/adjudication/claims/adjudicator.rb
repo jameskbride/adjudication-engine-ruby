@@ -5,7 +5,12 @@ module Adjudication
     class Adjudicator
 
       def adjudicate(claim, providers)
-        Claim.new(claim)
+        claim = Claim.new(claim)
+        if !claim.in_network?(providers)
+          claim.reject!
+        end
+
+        claim
       end
     end
   end

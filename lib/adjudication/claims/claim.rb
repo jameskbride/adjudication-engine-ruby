@@ -24,6 +24,18 @@ module Adjudication
       def procedure_codes
         line_items.map(&:procedure_code)
       end
+
+      def in_network?(providers = [])
+        providers.collect {|provider| provider.npi}.include?(@provider)
+      end
+
+      def reject!
+        @line_items.each{|line_item| line_item.reject!}
+      end
+
+      def is_rejected?
+        @line_items.select{|line_item| line_item.is_rejected?}.length == @line_items.length
+      end
     end
   end
 end

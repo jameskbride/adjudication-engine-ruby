@@ -4,7 +4,7 @@ RSpec.describe Adjudication::Claims::Adjudicator do
 
   describe "Adjudication" do
 
-    let(:claim_data) {build_claim_data}
+    let(:claim_data) {Adjudication::TestUtils.build_claim_data}
     let(:adjudicator) { Adjudication::Claims::Adjudicator.new }
 
     it "it adjudicates a valid claim" do
@@ -18,34 +18,14 @@ RSpec.describe Adjudication::Claims::Adjudicator do
       expect(claim.patient).to eq(claim_data['patient'])
       expect(claim.start_date).to eq(claim_data['start_date'])
     end
-  end
 
-  def build_claim_data
-    parsed_claim = JSON.parse('{
-    "provider": "1811052616",
-    "number": "2017-09-01-123214",
-    "start_date": "2017-09-01",
-    "subscriber": {
-      "ssn": "000-11-7777",
-      "group_number": "US00123"
-    },
-    "patient": {
-      "ssn": "000-12-5555",
-      "relationship": "spouse"
-    },
-    "line_items": [
-      {
-        "procedure_code": "D1110",
-        "tooth_code": null,
-        "charged": 47
-      },
-      {
-        "procedure_code": "D0120",
-        "tooth_code": null,
-        "charged": 25
-      }
-    ]
-  }')
-    parsed_claim
+    it "it rejects out of network claims" do
+      providers = [Adjudication::Providers::Provider.new("0123456789")]
+      claim_data['provider'] = "9876543210"
+
+      claim = adjudicator.adjudicate(claim_data, providers)
+
+      expect(claim.is_rejected?).to eq(true)
+    end
   end
 end

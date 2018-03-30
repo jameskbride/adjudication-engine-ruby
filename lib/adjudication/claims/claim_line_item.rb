@@ -26,6 +26,10 @@ module Adjudication
         @status_code = 'R'
       end
 
+      def is_rejected?
+        'R'.eql?(@status_code)
+      end
+
       def pay!(carrier_paid)
         @status_code = 'P'
         @carrier_paid = carrier_paid
