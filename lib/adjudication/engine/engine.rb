@@ -23,7 +23,8 @@ module Adjudication
 
       def process(claims_data)
         preprocessed_claims_data = preprocess_claims(claims_data)
-        providers = @provider_manager.retrieve_providers
+        @provider_manager.retrieve_providers
+        providers = @provider_manager.providers
         preprocessed_claims_data.map {|claim| @adjudicator.adjudicate(claim, providers)}
       end
 

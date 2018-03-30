@@ -49,8 +49,8 @@ RSpec.describe Adjudication::Providers do
         good_provider = Adjudication::Providers::Provider.new("0123456789")
         expect(fetcher).to receive(:provider_data).and_return([good_provider])
 
-        providers = provider_manager.retrieve_providers
-
+        provider_manager.retrieve_providers
+        providers = provider_manager.providers
         expect(providers).to eq([good_provider])
       end
 
@@ -59,8 +59,8 @@ RSpec.describe Adjudication::Providers do
         bad_provider = Adjudication::Providers::Provider.new("a123456789")
         expect(fetcher).to receive(:provider_data).and_return([good_provider, bad_provider])
 
-        providers = provider_manager.retrieve_providers
-
+        provider_manager.retrieve_providers
+        providers = provider_manager.providers
         expect(providers).to eq([good_provider])
       end
     end

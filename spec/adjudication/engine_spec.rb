@@ -19,7 +19,8 @@ RSpec.describe Adjudication::Engine do
 
         it "it adjudicates all claims" do
           providers = [Adjudication::Providers::Provider.new("1811052616")]
-          expect(provider_manager).to receive(:retrieve_providers).and_return(providers)
+          expect(provider_manager).to receive(:retrieve_providers)
+          expect(provider_manager).to receive(:providers).and_return(providers)
 
           claim = instance_double("Claim")
           expect(adjudicator).to receive(:adjudicate).with(claims_data[0], providers).and_return(claim)
