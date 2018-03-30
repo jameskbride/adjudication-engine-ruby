@@ -1,10 +1,14 @@
 require "adjudication/engine/version"
 require "adjudication/claims/adjudicator"
-require "adjudication/claims/claim"
+require "adjudication/providers/fetcher"
 
 module Adjudication
   module Engine
-    def self.run(claims_data, adjudication_engine)
+    def self.run(claims_data)
+      provider_data_uri = 'http://provider-data.beam.dental/beam-network.csv'
+      fetcher = Adjudication::Providers::Fetcher.new(provider_data_uri)
+      adjudicator = Adjudication::Claims::Adjudicator.new
+      adjudication_engine = Adjudication::Engine::AdjudicationEngine.new(adjudicator, fetcher)
       adjudication_engine.process(claims_data)
     end
 

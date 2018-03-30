@@ -1,3 +1,5 @@
+require "adjudication/claims/claim"
+
 module Adjudication
   module Claims
     class Adjudicator
