@@ -4,7 +4,7 @@ module Adjudication
   module Claims
     class Adjudicator
 
-      def adjudicate(claim)
+      def adjudicate(claim, providers)
         Claim.new(claim)
       end
     end

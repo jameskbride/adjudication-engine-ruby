@@ -8,7 +8,9 @@ RSpec.describe Adjudication::Claims::Adjudicator do
     let(:adjudicator) { Adjudication::Claims::Adjudicator.new }
 
     it "it adjudicates a valid claim" do
-      claim = adjudicator.adjudicate(claim_data)
+      providers = [Adjudication::Providers::Provider.new("1811052616")]
+
+      claim = adjudicator.adjudicate(claim_data, providers)
 
       expect(claim.number).to eq(claim_data['number'])
       expect(claim.provider).to eq(claim_data['provider'])

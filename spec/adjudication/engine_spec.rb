@@ -13,12 +13,19 @@ RSpec.describe Adjudication::Engine do
 
         let(:claims_data) { build_claims_data }
         let(:fetcher) { instance_double("Fetcher") }
-        let(:adjudicator) { Adjudication::Claims::Adjudicator.new }
-        let(:adjudication_engine) { Adjudication::Engine::AdjudicationEngine.new(adjudicator, fetcher) }
+        let(:provider_manager) { instance_double("ProviderManager") }
+        let(:adjudicator) { instance_double("Adjudicator") }
+        let(:adjudication_engine) { Adjudication::Engine::AdjudicationEngine.new(adjudicator, provider_manager) }
 
         it "it adjudicates all claims" do
+          providers = [Adjudication::Providers::Provider.new("1811052616")]
+          expect(provider_manager).to receive(:retrieve_providers).and_return(providers)
+
+          claim = instance_double("Claim")
+          expect(adjudicator).to receive(:adjudicate).with(claims_data[0], providers).and_return(claim)
+
           processed_claims = adjudication_engine.process(claims_data)
-          expect(processed_claims.length).to eq(1)
+          expect(processed_claims[0]).to eq(claim)
         end
       end
     end

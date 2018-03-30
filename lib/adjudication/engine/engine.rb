@@ -1,6 +1,7 @@
 require "adjudication/engine/version"
 require "adjudication/claims/adjudicator"
 require "adjudication/providers/fetcher"
+require "adjudication/providers/providers"
 
 module Adjudication
   module Engine
@@ -8,20 +9,22 @@ module Adjudication
       provider_data_uri = 'http://provider-data.beam.dental/beam-network.csv'
       fetcher = Adjudication::Providers::Fetcher.new(provider_data_uri)
       adjudicator = Adjudication::Claims::Adjudicator.new
-      adjudication_engine = Adjudication::Engine::AdjudicationEngine.new(adjudicator, fetcher)
+      provider_manager = Adjudication::Providers::ProviderManager.new(fetcher)
+      adjudication_engine = Adjudication::Engine::AdjudicationEngine.new(adjudicator, provider_manager)
       adjudication_engine.process(claims_data)
     end
 
     class AdjudicationEngine
 
-      def initialize(adjudicator, fetcher)
+      def initialize(adjudicator, provider_manager)
         @adjudicator = adjudicator
-        @fetcher = fetcher
+        @provider_manager = provider_manager
       end
 
       def process(claims_data)
         preprocessed_claims_data = preprocess_claims(claims_data)
-        preprocessed_claims_data.map {|claim| @adjudicator.adjudicate(claim)}
+        providers = @provider_manager.retrieve_providers
+        preprocessed_claims_data.map {|claim| @adjudicator.adjudicate(claim, providers)}
       end
 
       private
