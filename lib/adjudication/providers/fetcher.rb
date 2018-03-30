@@ -10,12 +10,9 @@ module Adjudication
       end
 
       def provider_data
-        providers = []
-        CSV.new(open(@data_uri), {:headers => :first_row}).each do |csv|
-          providers.push(Adjudication::Providers::Provider.new(csv['NPI']))
+        CSV.new(open(@data_uri), {:headers => :first_row}).map do |csv|
+          Adjudication::Providers::Provider.new(csv['NPI'])
         end
-
-        providers
       end
     end
   end
