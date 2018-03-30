@@ -14,7 +14,7 @@ module Adjudication
       end
 
       def retrieve_providers
-
+        @fetcher.provider_data
       end
 
     end
