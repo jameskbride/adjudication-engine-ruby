@@ -1,3 +1,6 @@
+require "open-uri"
+require "csv"
+
 module Adjudication
   module Providers
     class Fetcher
@@ -7,8 +10,12 @@ module Adjudication
       end
 
       def provider_data
-        # TODO Import CSV data from http://provider-data.beam.dental/beam-network.csv
-        # and return it.
+        providers = []
+        CSV.new(open(@data_uri), {:headers => :first_row}).each do |csv|
+          providers.push(Adjudication::Providers::Provider.new(csv['NPI']))
+        end
+
+        providers
       end
     end
   end
