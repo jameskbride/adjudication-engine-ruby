@@ -7,22 +7,26 @@ RSpec.describe Adjudication::Engine do
   end
 
   describe "AdjudicationEngine" do
-    context "when processing claims" do
 
-      let(:claims_data) { build_claims_data }
-      let(:adjudication_engine) { Adjudication::Engine::AdjudicationEngine.new() }
+    context "processing" do
+      context "when processing claims" do
 
-      it "it returns all claims" do
-        processed_claims = adjudication_engine.process(claims_data)
-        expect(processed_claims.length).to eq(1)
+        let(:claims_data) { build_claims_data }
+        let(:adjudicator) { Adjudication::Engine::Adjudicator.new }
+        let(:adjudication_engine) { Adjudication::Engine::AdjudicationEngine.new(adjudicator) }
 
-        preprocessed_claim = claims_data[0]
-        claim = processed_claims[0]
-        expect(claim.number).to eq(preprocessed_claim['number'])
-        expect(claim.provider).to eq(preprocessed_claim['npi'])
-        expect(claim.subscriber).to eq(preprocessed_claim['subscriber'])
-        expect(claim.patient).to eq(preprocessed_claim['patient'])
-        expect(claim.start_date).to eq(preprocessed_claim['start_date'])
+        it "it adjudicates all claims" do
+          processed_claims = adjudication_engine.process(claims_data)
+          expect(processed_claims.length).to eq(1)
+
+          preprocessed_claim = claims_data[0]
+          claim = processed_claims[0]
+          expect(claim.number).to eq(preprocessed_claim['number'])
+          expect(claim.provider).to eq(preprocessed_claim['npi'])
+          expect(claim.subscriber).to eq(preprocessed_claim['subscriber'])
+          expect(claim.patient).to eq(preprocessed_claim['patient'])
+          expect(claim.start_date).to eq(preprocessed_claim['start_date'])
+        end
       end
     end
   end
