@@ -9,7 +9,8 @@ module Adjudication
         :status_code,
         :patient_paid,
         :carrier_paid,
-        :charged
+        :charged,
+        :procedure_code
       )
 
       def initialize line_item_hash

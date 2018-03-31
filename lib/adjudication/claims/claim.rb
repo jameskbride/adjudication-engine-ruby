@@ -1,4 +1,5 @@
 require "adjudication/claims/claim_line_item"
+require "set"
 
 module Adjudication
   module Claims
@@ -35,6 +36,20 @@ module Adjudication
 
       def is_rejected?
         @line_items.select{|line_item| line_item.is_rejected?}.length == @line_items.length
+      end
+
+      def is_duplicate?(claim)
+        @start_date&.eql?(claim&.start_date) &&
+            @patient['ssn'].eql?(claim.patient['ssn']) &&
+            procedure_codes_match?(claim.line_items)
+      end
+
+      private
+      def procedure_codes_match?(claim_line_items)
+        procedure_codes = @line_items.collect {|line_item| line_item.procedure_code}.to_set
+        other_procedure_codes = claim_line_items.collect {|line_item| line_item.procedure_code}.to_set
+
+        procedure_codes == other_procedure_codes
       end
     end
   end

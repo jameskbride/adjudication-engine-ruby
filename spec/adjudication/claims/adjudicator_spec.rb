@@ -4,11 +4,14 @@ RSpec.describe Adjudication::Claims::Adjudicator do
 
   describe "Adjudication" do
 
-    let(:claim_data) {Adjudication::TestUtils.build_claim_data}
+    IN_NETWORK_PROVIDER_NPI = "0123456789"
+
+    let(:claim_data) { Adjudication::TestUtils.build_claim_data }
     let(:adjudicator) { Adjudication::Claims::Adjudicator.new }
+    let(:providers) { [Adjudication::Providers::Provider.new(IN_NETWORK_PROVIDER_NPI)] }
 
     it "it adjudicates a valid claim" do
-      providers = [Adjudication::Providers::Provider.new("1811052616")]
+      claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
 
       claim = adjudicator.adjudicate(claim_data, providers)
 
@@ -20,12 +23,27 @@ RSpec.describe Adjudication::Claims::Adjudicator do
     end
 
     it "it rejects out of network claims" do
-      providers = [Adjudication::Providers::Provider.new("0123456789")]
       claim_data['provider'] = "9876543210"
 
       claim = adjudicator.adjudicate(claim_data, providers)
 
       expect(claim.is_rejected?).to eq(true)
+    end
+
+    context "Duplicate claims" do
+
+      it "rejects claims that have the same start_date, patient SSN, and procedure codes as a previous claim" do
+        claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
+        duplicate_claim_data = Adjudication::TestUtils.build_claim_data
+        duplicate_claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
+
+        original_claim = adjudicator.adjudicate(claim_data, providers)
+        duplicate_claim = adjudicator.adjudicate(duplicate_claim_data, providers)
+
+        expect(original_claim.is_rejected?).to eq(false)
+        expect(duplicate_claim.is_rejected?).to eq(true)
+      end
+
     end
   end
 end
