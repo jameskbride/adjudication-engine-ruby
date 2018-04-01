@@ -10,9 +10,16 @@ module Adjudication
       end
 
       def provider_data
-        CSV.new(open(@data_uri), {:headers => :first_row}).map do |csv|
-          Adjudication::Providers::Provider.new(csv['NPI'])
+        providers = []
+        begin
+          providers = CSV.new(open(@data_uri), {:headers => :first_row}).map do |csv|
+            Adjudication::Providers::Provider.new(csv['NPI'])
+          end
+        rescue
+          $stderr.puts("Error retrieving providers")
         end
+
+        providers
       end
     end
   end
