@@ -10,18 +10,26 @@ module Adjudication
 
       def adjudicate(claim, providers)
         claim = Adjudication::Claims::Claim.new(claim)
-        if !claim.in_network?(providers)
-          claim.reject!
-        end
+        reject_out_of_network_claims(claim, providers)
+        reject_duplicate_claims(claim)
 
+        @adjudicated_claims.push(claim)
+        claim
+      end
+
+      private
+      def reject_duplicate_claims(claim)
         @adjudicated_claims.each {|adjudicated_claim|
           if claim.is_duplicate?(adjudicated_claim)
             claim.reject!
           end
         }
+      end
 
-        @adjudicated_claims.push(claim)
-        claim
+      def reject_out_of_network_claims(claim, providers)
+        if !claim.in_network?(providers)
+          claim.reject!
+        end
       end
     end
   end

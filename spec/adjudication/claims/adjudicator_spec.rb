@@ -10,29 +10,33 @@ RSpec.describe Adjudication::Claims::Adjudicator do
     let(:adjudicator) { Adjudication::Claims::Adjudicator.new }
     let(:providers) { [Adjudication::Providers::Provider.new(IN_NETWORK_PROVIDER_NPI)] }
 
-    it "it adjudicates a valid claim" do
-      claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
+    context "Valid claims" do
+      it "it adjudicates a valid claim" do
+        claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
 
-      claim = adjudicator.adjudicate(claim_data, providers)
+        claim = adjudicator.adjudicate(claim_data, providers)
 
-      expect(claim.number).to eq(claim_data['number'])
-      expect(claim.provider).to eq(claim_data['provider'])
-      expect(claim.subscriber).to eq(claim_data['subscriber'])
-      expect(claim.patient).to eq(claim_data['patient'])
-      expect(claim.start_date).to eq(claim_data['start_date'])
+        expect(claim.number).to eq(claim_data['number'])
+        expect(claim.provider).to eq(claim_data['provider'])
+        expect(claim.subscriber).to eq(claim_data['subscriber'])
+        expect(claim.patient).to eq(claim_data['patient'])
+        expect(claim.start_date).to eq(claim_data['start_date'])
+      end
     end
 
-    it "it rejects out of network claims" do
-      claim_data['provider'] = "9876543210"
+    context "Network status" do
+      it "it rejects out of network claims" do
+        claim_data['provider'] = "9876543210"
 
-      claim = adjudicator.adjudicate(claim_data, providers)
+        claim = adjudicator.adjudicate(claim_data, providers)
 
-      expect(claim.is_rejected?).to eq(true)
+        expect(claim.is_rejected?).to eq(true)
+      end
     end
 
     context "Duplicate claims" do
 
-      it "rejects claims that have the same start_date, patient SSN, and procedure codes as a previous claim" do
+      it "it rejects claims that are duplicates of a previously processed claim" do
         claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
         duplicate_claim_data = Adjudication::TestUtils.build_claim_data
         duplicate_claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
