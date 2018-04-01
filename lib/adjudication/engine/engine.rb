@@ -25,7 +25,12 @@ module Adjudication
         preprocessed_claims_data = preprocess_claims(claims_data)
         @provider_manager.retrieve_providers
         providers = @provider_manager.providers
-        preprocessed_claims_data.map {|claim| @adjudicator.adjudicate(claim, providers)}
+        if !providers.empty?
+          preprocessed_claims_data.map {|claim| @adjudicator.adjudicate(claim, providers)}
+        else
+          []
+        end
+
       end
 
       private
