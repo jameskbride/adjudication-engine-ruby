@@ -35,3 +35,9 @@ In order to allow the CLI (in the `bin` folder) to work properly, the `Adjudicat
 # Notes
 This solution requires Ruby 2.3.4 or higher (see the `.ruby-version` file).  There were some module changes made to existing code, so if this gem is being installed and used some 
 client code may need to be updated accordingly.  This solution was also fully Test-Driven.
+
+# Recommendations
+
+- Batch processing applications such as this one typically allow for checkpoints and the ability to restart processing at arbitrary points in the file.  These are features that we might want to implement in the future.
+- SSN is typically not used as an identifier due to privacy concerns and HIPAA compliance.  This field should be replaced with a unique but non-personally identifiable value.  Alternately a combination of other fields can be used in lieu of the SSN.
+- The `adjudication-engine` script should be updated to allow the Beam providers file location to be passed in.  This will allow the script to be run in a development environment.  
