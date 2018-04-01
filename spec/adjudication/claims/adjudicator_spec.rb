@@ -23,6 +23,36 @@ RSpec.describe Adjudication::Claims::Adjudicator do
         expect(claim.start_date).to eq(claim_data['start_date'])
       end
 
+      it "it rejects line items which are not covered" do
+        claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
+
+        line_item = Adjudication::TestUtils.build_claim_line_item_data("D2001", 16, 47)
+        claim_data['line_items'] = [line_item]
+
+        claim = adjudicator.adjudicate(claim_data, providers)
+        expect(claim.line_items[0].is_rejected?).to eq(true)
+        expect(claim.line_items[0].carrier_paid).to eq(nil)
+        expect(claim.line_items[0].patient_paid).to eq(nil)
+      end
+
+      it "it can reject individual line items" do
+        claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
+
+        preventative_line_item = Adjudication::TestUtils.build_claim_line_item_data("D1110", 16, 47)
+        rejected_line_item = Adjudication::TestUtils.build_claim_line_item_data("A2001", nil, 100)
+        claim_data['line_items'] = [preventative_line_item, rejected_line_item]
+
+        claim = adjudicator.adjudicate(claim_data, providers)
+        expect(claim.is_rejected?).to eq(false)
+        expect(claim.line_items[0].is_rejected?).to eq(false)
+        expect(claim.line_items[0].carrier_paid).to eq(47)
+        expect(claim.line_items[0].patient_paid).to eq(0)
+
+        expect(claim.line_items[1].is_rejected?).to eq(true)
+        expect(claim.line_items[1].carrier_paid).to eq(nil)
+        expect(claim.line_items[1].patient_paid).to eq(nil)
+      end
+
       it "it fully pays preventative and diagnostic claim line items" do
         claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
 
@@ -31,12 +61,25 @@ RSpec.describe Adjudication::Claims::Adjudicator do
         claim_data['line_items'] = [preventative_line_item, diagnostic_line_item]
 
         claim = adjudicator.adjudicate(claim_data, providers)
-        expect(claim.line_items.length).to eq(2)
+        expect(claim.is_rejected?).to eq(false)
         expect(claim.line_items[0].carrier_paid).to eq(47)
         expect(claim.line_items[0].patient_paid).to eq(0)
 
         expect(claim.line_items[1].carrier_paid).to eq(100)
         expect(claim.line_items[1].patient_paid).to eq(0)
+      end
+
+      it "it pays 25% of orthodontics" do
+        claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
+
+        ortho_line_item = Adjudication::TestUtils.build_claim_line_item_data("D8110", 16, 100)
+        claim_data['line_items'] = [ortho_line_item]
+
+        claim = adjudicator.adjudicate(claim_data, providers)
+        expect(claim.is_rejected?).to eq(false)
+        expect(claim.line_items[0].is_rejected?).to eq(false)
+        expect(claim.line_items[0].carrier_paid).to eq(25)
+        expect(claim.line_items[0].patient_paid).to eq(75)
       end
     end
 

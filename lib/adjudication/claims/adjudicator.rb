@@ -4,6 +4,8 @@ module Adjudication
   module Claims
     class Adjudicator
 
+      ORTHO_PERCENT = 0.25
+
       def initialize
         @adjudicated_claims = []
       end
@@ -27,6 +29,10 @@ module Adjudication
       def process_line_item(line_item)
         if line_item.preventive_and_diagnostic?
           line_item.pay!(line_item.charged)
+        elsif line_item.ortho?
+          line_item.pay!(line_item.charged * ORTHO_PERCENT)
+        else
+          line_item.reject!
         end
       end
 
