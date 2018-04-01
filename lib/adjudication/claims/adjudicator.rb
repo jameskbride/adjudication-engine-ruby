@@ -21,11 +21,24 @@ module Adjudication
           }
         end
 
+        log_rejections(claim)
+
         @adjudicated_claims.push(claim)
         claim
       end
 
       private
+      def log_rejections(claim)
+        rejected_line_items = claim.line_items
+                                  .select {|line_item| line_item.is_rejected?}
+        if (!rejected_line_items.empty?)
+          $stderr.puts("\tClaim: #{claim.number}\n\t")
+          rejected_line_items.each {|line_item|
+            $stderr.puts("\tRejected line item: #{line_item.inspect}\n\t")
+          }
+        end
+      end
+
       def process_line_item(line_item)
         if line_item.preventive_and_diagnostic?
           pay_preventative_and_diagnostics(line_item)

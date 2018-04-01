@@ -53,6 +53,16 @@ RSpec.describe Adjudication::Claims::Adjudicator do
         expect(claim.line_items[1].patient_paid).to eq(nil)
       end
 
+      it "it logs rejected line items to stderr" do
+        claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
+
+        rejected_code = "A2001"
+        rejected_line_item = Adjudication::TestUtils.build_claim_line_item_data(rejected_code, nil, 100)
+        claim_data['line_items'] = [rejected_line_item]
+
+        expect{adjudicator.adjudicate(claim_data, providers)}.to output(/#{rejected_code}/).to_stderr
+      end
+
       it "it fully pays preventative and diagnostic claim line items" do
         claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
 
