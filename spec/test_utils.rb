@@ -28,12 +28,12 @@ module Adjudication
       }')
     end
 
-    def self.build_claim_line_item_data
-      JSON.parse('{
-            "procedure_code": "D1110",
-            "tooth_code": null,
-            "charged": 47
-          }')
+    def self.build_claim_line_item_data(procedure_code = "D1110", tooth_code = "null", charged = 47)
+      JSON.parse("{
+            \"procedure_code\": \"#{procedure_code}\",
+            \"tooth_code\": #{if tooth_code then tooth_code else "null" end},
+            \"charged\": #{charged}
+          }")
     end
   end
 end

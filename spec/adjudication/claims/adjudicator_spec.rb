@@ -22,6 +22,22 @@ RSpec.describe Adjudication::Claims::Adjudicator do
         expect(claim.patient).to eq(claim_data['patient'])
         expect(claim.start_date).to eq(claim_data['start_date'])
       end
+
+      it "it fully pays preventative and diagnostic claim line items" do
+        claim_data['provider'] = IN_NETWORK_PROVIDER_NPI
+
+        preventative_line_item = Adjudication::TestUtils.build_claim_line_item_data("D1110", 16, 47)
+        diagnostic_line_item = Adjudication::TestUtils.build_claim_line_item_data("A1999", nil, 100)
+        claim_data['line_items'] = [preventative_line_item, diagnostic_line_item]
+
+        claim = adjudicator.adjudicate(claim_data, providers)
+        expect(claim.line_items.length).to eq(2)
+        expect(claim.line_items[0].carrier_paid).to eq(47)
+        expect(claim.line_items[0].patient_paid).to eq(0)
+
+        expect(claim.line_items[1].carrier_paid).to eq(100)
+        expect(claim.line_items[1].patient_paid).to eq(0)
+      end
     end
 
     context "Network status" do
