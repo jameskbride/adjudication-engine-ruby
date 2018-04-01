@@ -20,12 +20,12 @@ RSpec.describe Adjudication::Providers do
         expect(provider.is_valid?).to eq(false)
       end
 
-      it "when the npi too short" do
+      it "when the npi is too short" do
         provider = Adjudication::Providers::Provider.new("123456789")
         expect(provider.is_valid?).to eq(false)
       end
 
-      it "when the npi too long" do
+      it "when the npi is too long" do
         provider = Adjudication::Providers::Provider.new("01234567890")
         expect(provider.is_valid?).to eq(false)
       end
