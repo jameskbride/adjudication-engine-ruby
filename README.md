@@ -31,3 +31,7 @@ There are several steps to this adjudicator, some of which your coworker roughed
     7. Log any rejections to STDERR.
 
 In order to allow the CLI (in the `bin` folder) to work properly, the `Adjudication::Engine::run` method should return processed claims.
+
+# Notes
+This solution requires Ruby 2.3.4 or higher (see the `.ruby-version` file).  There were some module changes made to existing code, so if this gem is being installed and used some 
+client code may need to be updated accordingly.  This solution was also fully Test-Driven.
