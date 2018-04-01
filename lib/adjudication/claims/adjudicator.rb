@@ -28,12 +28,20 @@ module Adjudication
       private
       def process_line_item(line_item)
         if line_item.preventive_and_diagnostic?
-          line_item.pay!(line_item.charged)
+          pay_preventative_and_diagnostics(line_item)
         elsif line_item.ortho?
-          line_item.pay!(line_item.charged * ORTHO_PERCENT)
+          pay_orthodontics(line_item)
         else
           line_item.reject!
         end
+      end
+
+      def pay_preventative_and_diagnostics(line_item)
+        line_item.pay!(line_item.charged)
+      end
+
+      def pay_orthodontics(line_item)
+        line_item.pay!(line_item.charged * ORTHO_PERCENT)
       end
 
       def reject_duplicate_claims(claim)
