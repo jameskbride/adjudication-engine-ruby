@@ -2,7 +2,7 @@ require "spec_helper"
 
 RSpec.describe Adjudication::Claims::Claim do
 
-  context "covered in-network" do
+  context "Network status" do
 
     it "it is in-network when it has an in-network provider" do
       in_network_npi = "0123456789"
@@ -52,6 +52,41 @@ RSpec.describe Adjudication::Claims::Claim do
       claim.reject!
 
       expect(claim.is_rejected?).to eq(true)
+    end
+  end
+
+  context "Duplicate status" do
+
+    let(:claim_data) {Adjudication::TestUtils::build_claim_data}
+    let(:claim) { Adjudication::Claims::Claim.new(claim_data)}
+    it "it is a duplicate when it has the same start_date, patient SSN, and procedure codes as a another claim" do
+      other_claim = Adjudication::Claims::Claim.new(claim_data)
+
+      expect(claim.is_duplicate?(other_claim)).to eq(true)
+    end
+
+    it "it is not a duplicate when it has a different start_date" do
+      other_claim_data = Adjudication::TestUtils.build_claim_data
+      other_claim_data['start_date'] = "2017-09-13"
+      other_claim = Adjudication::Claims::Claim.new(other_claim_data)
+
+      expect(claim.is_duplicate?(other_claim)).to eq(false)
+    end
+
+    it "it is not a duplicate when it has a different patient SSN" do
+      other_claim_data = Adjudication::TestUtils.build_claim_data
+      other_claim_data['patient']['ssn'] = "123-45-6789"
+      other_claim = Adjudication::Claims::Claim.new(other_claim_data)
+
+      expect(claim.is_duplicate?(other_claim)).to eq(false)
+    end
+
+    it "it is not a duplicate when it has different procedure codes" do
+      other_claim_data = Adjudication::TestUtils.build_claim_data
+      other_claim_data['line_items'][0]['procedure_code'] = "X1234"
+      other_claim = Adjudication::Claims::Claim.new(other_claim_data)
+
+      expect(claim.is_duplicate?(other_claim)).to eq(false)
     end
   end
 end
